@@ -142,7 +142,7 @@ local utils = {
         local version = parse_version(info.redis_version or info.server.redis_version)
 
         if version:is('<', '1.2.0') then
-            error("redis-lua does not support Redis < 1.2.0 (current: "..version.string..")")
+            error("luaredis does not support Redis < 1.2.0 (current: "..version.string..")")
         end
 
         return client, version
@@ -2608,24 +2608,24 @@ context("Redis commands", function()
 
     context("Pub/Sub", function()
         test('PUBLISH (client:publish)', function()
-            assert_equal(client:publish('redis-lua-publish', 'test'), 0)
+            assert_equal(client:publish('luaredis-publish', 'test'), 0)
         end)
 
         test('SUBSCRIBE (client:subscribe)', function()
-            client:subscribe('redis-lua-publish')
+            client:subscribe('luaredis-publish')
 
             -- we have one subscriber
             data = 'data' .. tostring(math.random(1000))
             publisher = utils.create_client(settings)
-            assert_equal(publisher:publish('redis-lua-publish', data), 1)
+            assert_equal(publisher:publish('luaredis-publish', data), 1)
             -- we have data
-            response = client:subscribe('redis-lua-publish')
-            -- {"message","redis-lua-publish","testXXX"}
+            response = client:subscribe('luaredis-publish')
+            -- {"message","luaredis-publish","testXXX"}
             assert_true(table.contains(response, 'message'))
-            assert_true(table.contains(response, 'redis-lua-publish'))
+            assert_true(table.contains(response, 'luaredis-publish'))
             assert_true(table.contains(response, data))
 
-            client:unsubscribe('redis-lua-publish')
+            client:unsubscribe('luaredis-publish')
         end)
     end)
 
