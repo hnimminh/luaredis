@@ -1,5 +1,5 @@
 local redis = {
-    _VERSION     = 'luaredis 2.0.5.0',
+    _VERSION     = 'luaredis 2.0.5.1',
     _DESCRIPTION = 'A Lua client library for the redis key value storage system.',
     _COPYRIGHT   = 'Copyright (C) 2009-2020',
     _EDITOR      = 'Minh Minh'
