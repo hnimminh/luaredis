@@ -12,7 +12,7 @@ description = {
       A Lua client library for the redis key value storage system.
    ]],
    homepage = "https://github.com/hnimminh/luaredis",
-   license = "MIT/X11"
+   license = "MIT"
 }
 
 dependencies = {
