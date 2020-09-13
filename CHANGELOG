@@ -24,9 +24,9 @@ v2.0.4 (2012-07-15)
     see `examples/define_commands.lua` and the test suite.
 
 v2.0.3 (2012-04-01)
-  * It is now possible to require redis-lua by assigning the returned module
+  * It is now possible to require luaredis by assigning the returned module
     to a local variable like `local redis = require 'redis'`. Starting with
-    this release this is the preferred way to require redis-lua. The `Redis`
+    this release this is the preferred way to require luaredis. The `Redis`
     global name is still available for backwards compatibility but it will
     be removed in the next major version.
 
@@ -91,10 +91,10 @@ v1.0.1 (2010-07-30)
   * Providing a more generalized version of the multibulk request serializer.
 
   * _G is now passed as the argument of a pipeline block. This will change in
-    a future major release of redis-lua, but for now it is useful to enable
+    a future major release of luaredis, but for now it is useful to enable
     the usage of global functions inside of a pipeline block.
 
   * Fix: user-added commands were not available when pipelining commands.
 
 v1.0.0 (2010-06-02)
-  * First versioned release of redis-lua
+  * First versioned release of luaredis
