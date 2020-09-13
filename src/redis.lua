@@ -500,7 +500,7 @@ client_prototype.pipeline = function(client, block)
     end
 
     -- TODO: this hack is necessary to temporarily reuse the current
-    --       request -> response handling implementation of redis-lua
+    --       request -> response handling implementation of luaredis
     --       without further changes in the code, but it will surely
     --       disappear when the new command-definition infrastructure
     --       will finally be in place.
