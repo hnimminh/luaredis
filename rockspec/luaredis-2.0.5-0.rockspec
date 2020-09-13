@@ -2,8 +2,8 @@ package = "luaredis"
 version = "2.0.5-0"
 
 source = {
-   url = "https://github.com/hnimminh/luaredis/raw/version-2.0/luaredis-2.0.5-0.zip",
-   md5 = "11928a88c99c23b375671d66754f07e3"
+   url = "https://github.com/hnimminh/repository/raw/master/luaredis-2.0.5-0.zip",
+   md5 = "4f59a2795a9437dbe27dc468261adadc"
 }
 
 description = {
