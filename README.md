@@ -177,4 +177,4 @@ uptime_in_days => 0
 Daniele Alessandri
 
 ## License ##
-MIT (see LICENSE).
+MIT (see [LICENSE](LICENSE))
