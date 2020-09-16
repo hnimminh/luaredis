@@ -514,7 +514,8 @@ client_prototype.pipeline = function(client, block)
             end
             return function(self, ...)
                 local reply = cmd(client, ...)
-                table_insert(parsers, #requests, reply.parser)
+                parsers[#requests] = reply.parser
+                -- table_insert(parsers, #requests, reply.parser)
                 return reply
             end
         end
