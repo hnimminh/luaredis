@@ -19,6 +19,12 @@ version of LuaSocket) and __LuaJit 2.0__.
 
 ## Examples of usage ##
 
+### Installation
+* The [redis.lua](src/redis.lua?raw=1) file should be dropped into an existing project or install via luarocks
+```shell
+luarocks install luaredis
+```
+
 ### Include luaredis in your script ###
 
 Just require the `redis` module assigning it to a variable:
