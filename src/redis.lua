@@ -836,12 +836,20 @@ local function create_connection(parameters)
     if parameters.scheme == 'unix' then
         perform_connection, socket = connect_unix, require('socket.unix')
         assert(socket, 'your build of LuaSocket does not support UNIX domain sockets')
+    elseif parameters.scheme == 'tcp6' then
+        perform_connection, socket = connect_unix, require('socket').tcp6
+        assert(socket, 'your build of LuaSocket does not support IPv6 domain sockets')
     else
         if parameters.scheme then
             local scheme = parameters.scheme
-            assert(scheme == 'redis' or scheme == 'tcp', 'invalid scheme: '..scheme)
+            assert(scheme == 'redis' or scheme == 'tcp' or scheme == 'tcp6', 'invalid scheme: '..scheme)
         end
-        perform_connection, socket = connect_tcp, require('socket').tcp
+        local isaddr = require('socket').dns.getaddrinfo(parameters.host)
+        if isaddr and isaddr[1].family == 'inet6' then
+            perform_connection, socket = connect_tcp, require('socket').tcp6
+        else
+            perform_connection, socket = connect_tcp, require('socket').tcp
+        end
     end
 
     return perform_connection(socket(), parameters)
