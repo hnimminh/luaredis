@@ -815,6 +815,39 @@ local function connect_tcp(socket, parameters)
         redis.error('could not connect to '..host..':'..port..' ['..err..']')
     end
     socket:setoption('tcp-nodelay', parameters.tcp_nodelay)
+
+    if parameters.tls then 
+        local ssl_ok, ssl = pcall(require, "ssl")
+        if not ssl_ok then
+            redis.error("SSL/TLS support requires the LuaSec library")
+        end
+
+        -- Configure SSL parameters
+        local ssl_params = {
+            mode = "client",
+            protocol = "tlsv1_2",
+            verify = parameters.verify,
+            options = "all",
+            cafile = parameters.cafile
+        }
+
+        -- Wrap the socket with SSL
+        local secure_sock, err = ssl.wrap(socket, ssl_params)
+        if not secure_sock then
+            redis.error("Failed to wrap socket with SSL: " .. err)
+        end
+
+        secure_sock:settimeout(parameters.timeout)
+
+        -- Perform SSL handshake
+        local success, err = secure_sock:dohandshake()
+        if not success then
+            redis.error("SSL handshake failed: " .. err)
+        end
+
+        socket = secure_sock
+    end
+
     return socket
 end
 
@@ -871,6 +904,13 @@ function redis.connect(...)
             local uri = require('socket.url')
             parameters = uri.parse(select(1, ...))
             if parameters.scheme then
+                if parameters.scheme == 'rediss' then
+                    parameters.tls = true  -- Enable TLS if using 'rediss'
+                else
+                    parameters.tls = false
+                end
+
+                
                 if parameters.query then
                     for k, v in parameters.query:gmatch('([-_%w]+)=([-_%w]+)') do
                         if k == 'tcp_nodelay' or k == 'tcp-nodelay' then
@@ -885,8 +925,41 @@ function redis.connect(...)
             end
         end
     elseif #args > 1 then
-        local host, port, timeout = unpack(args)
-        parameters = { host = host, port = port, timeout = tonumber(timeout) }
+        local host, port, timeout, tls, verify, cafile = unpack(args)
+      
+        tls = tls or false               -- Default TLS to false
+        verify = verify or 'none'        -- Default verification to 'none'
+        cafile = cafile or nil           -- Default cafile to an empty string
+
+        parameters = { 
+            host = host, 
+            port = port, 
+            timeout = tonumber(timeout), 
+            tls = tls,
+            verify = verify,
+            cafile = cafile
+        }
+
+        -- verify is 'peer', TLS must be enabled
+        if parameters.verify == 'peer' and not parameters.tls then
+            redis.error("TLS must be enabled when 'verify' is set to 'peer'")
+        end
+
+        -- verify is 'peer', a certificate file (cafile) must be provided
+        if parameters.verify == 'peer' and (parameters.cafile == nil or parameters.cafile == '') then
+            redis.error("A CA certificate file (cafile) must be provided when 'verify' is set to 'peer'")
+        end
+
+        -- If a CA certificate file (cafile) is provided, TLS must be enabled and verify must be 'peer'
+        if parameters.cafile ~= nil then
+            if not parameters.tls then
+                redis.error("TLS must be enabled when a CA certificate file (cafile) is provided")
+            end
+            if parameters.verify ~= 'peer' then
+                redis.error("Certificate verification ('verify') must be set to 'peer' when a CA certificate file (cafile) is provided")
+            end
+        end
+
     end
 
     local commands = redis.commands or {}
