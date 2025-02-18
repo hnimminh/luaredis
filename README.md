@@ -53,6 +53,42 @@ local redis = require 'redis'
 local client = redis.connect('unix:///tmp/redis.sock')
 ```
 
+### **Connecting with SSL/TLS Encryption**
+
+luaredis now supports secure connections to Redis servers using SSL/TLS. This is useful when connecting to Redis instances that require encrypted communication (e.g., AWS ElastiCache with encryption enabled, or self-hosted Redis with TLS configured).
+
+To enable TLS, use the `rediss://` scheme in the connection URI or explicitly pass TLS-related parameters when calling `redis.connect()`.
+
+#### **Using URI-based Connection**
+```lua
+local redis = require 'redis'
+local client = redis.connect('rediss://your-redis-host:6379')
+```
+
+#### **Using Direct Parameters**
+```lua
+local redis = require 'redis'
+local client = redis.connect('your-redis-host', 6379, 2, true, 'peer', '/path/to/ca.pem')
+```
+
+#### **Parameters:**
+- **`tls`** *(boolean)*: Enables TLS when set to `true`.
+- **`verify`** *(string)*: Can be `"none"` (default) or `"peer"`. If `"peer"`, the connection will verify the server’s certificate.
+- **`cafile`** *(string)*: Path to the CA certificate file for server verification. Required when `verify = "peer"`.
+
+#### **Example:**
+```lua
+local redis = require 'redis'
+local client = redis.connect('my-secure-redis.com', 6380, 2, true, 'peer', '/etc/ssl/certs/ca-cert.pem')
+local response = client:ping()  -- true
+```
+
+#### **Error Handling**
+- If `verify = "peer"`, TLS must be enabled.
+- If `cafile` is provided, `verify` must be `"peer"`.
+- If LuaSec (SSL library) is missing, an error will be thrown.
+  
+
 ### Set keys and get their values ###
 
 ``` lua
