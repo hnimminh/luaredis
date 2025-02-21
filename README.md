@@ -212,10 +212,13 @@ uptime_in_days => 0
 - [Redis](http://redis.io/)
 - [Git](http://git-scm.com/)
 
-## Editor ##
+### Maintainer ##
 [Minh Minh](https://hnimminh.github.io)
 
-## Origin Authors ##
+### Contributors
+[Amr Aly ](https://github.com/Amrrx)
+
+### Origin Authors ##
 Daniele Alessandri
 
 ## License ##
